@@ -38,6 +38,22 @@ def test_float_numbers():
     assert evaluate('0.5 * 0.5') == 0.25
 
 
+def test_integer_division():
+    assert evaluate('10 // 3') == 3.0
+
+
+def test_remainder_of_division():
+    assert evaluate('10 % 3') == 1.0
+
+
+def test_integer_division_negative():
+    assert evaluate('-10 // 3') == -4.0
+
+
+def test_remainder_of_division_negative():
+    assert evaluate('-10 % 3') == 2.0
+
+
 def test_empty_expression():
     with pytest.raises(ValueError):
         evaluate('')
@@ -61,6 +77,16 @@ def test_two_operators_in_a_row():
 def test_division_by_zero():
     with pytest.raises(ValueError):
         evaluate('17 / 0')
+
+
+def test_integer_division_by_zero():
+    with pytest.raises(ValueError):
+        evaluate('10 // 0')
+
+
+def test_remainder_of_division_by_zero():
+    with pytest.raises(ValueError):
+        evaluate('10 % 0')
 
 
 def test_cli_calculate():

@@ -4,7 +4,12 @@ def tokenize(expression: str):
     current_token = ""
     expect_number = True
 
-    for char in expression:
+    skip_next = False
+
+    for i, char in enumerate(expression):
+        if skip_next:
+            skip_next = False
+            continue
         if state == "START":
             if char.isdigit():
                 state = "NUMBER"
@@ -17,8 +22,16 @@ def tokenize(expression: str):
                 else:
                     tokens.append(("OPERATOR", char))
                     expect_number = True
+            elif char == "/":
+                if i + 1 < len(expression) and expression[i + 1] == "/":
+                    tokens.append(("OPERATOR", "//"))
+                    expect_number = True
+                    skip_next = True
+                else:
+                    tokens.append(("OPERATOR", "/"))
+                    expect_number = True
 
-            elif char in "*/":
+            elif char in "*%":
                 tokens.append(("OPERATOR", char))
                 expect_number = True
             elif char.isspace():
@@ -46,8 +59,14 @@ def tokenize(expression: str):
                 state = "START"
                 expect_number = False
 
-                if char in "+-*/":
+                if char in "+-*%":
                     tokens.append(("OPERATOR", char))
+                elif char == "/":
+                    if i + 1 < len(expression) and expression[i + 1] == "/":
+                        tokens.append(("OPERATOR", "//"))
+                        skip_next = True
+                    else:
+                        tokens.append(("OPERATOR", "/"))
                 elif char.isspace():
                     continue
                 else:
@@ -95,6 +114,20 @@ def calculate(tokens):
     while i < len(tokens):
         operator = tokens[i][1]
         number = tokens[i + 1][1]
+
+        if operator == "//":
+            if number == 0:
+                raise ValueError("Попытка деления на 0")
+            acc //= number
+            i += 2
+            continue
+
+        if operator == "%":
+            if number == 0:
+                raise ValueError("Попытка деления на 0")
+            acc %= number
+            i += 2
+            continue
 
         if operator == "*":
             acc *= number
