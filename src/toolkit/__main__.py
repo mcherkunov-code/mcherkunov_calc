@@ -1,3 +1,5 @@
+"""Командный интерфейс калькулятора и конвертера"""
+
 import argparse
 import sys
 
@@ -5,6 +7,7 @@ from .calculator import evaluate
 from .converter import convert
 
 parser = argparse.ArgumentParser(
+    # Создаём команды, которые пользователь может вызвать из терминала.
     prog="python -m toolkit",
     description="Calculator and unit converter",
 )
@@ -53,7 +56,7 @@ convert_parser.add_argument(
 
 args = parser.parse_args()
 
-try:
+try: # Ошибки вычисления и конвертации выводим в stderr и возвращаем код 2
     if args.command == "calc":
         print(evaluate(args.expression))
 
@@ -62,4 +65,4 @@ try:
 
 except (ValueError, ZeroDivisionError) as error:
     print(f"Ошибка: {error}", file=sys.stderr)
-    raise SystemExit(2)
+    raise SystemExit(2) # Код 2 используется для ошибок пользовательского ввода

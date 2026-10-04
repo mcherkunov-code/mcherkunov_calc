@@ -1,2 +1,2 @@
 class ToolkitError(ValueError):
-    """Base error for toolkit."""
+    """Базовый тип ошибок проекта."""

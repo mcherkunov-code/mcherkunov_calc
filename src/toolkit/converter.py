@@ -1,4 +1,8 @@
+"""Логика перевода значений между единицами измерения"""
+
 def convert(value: float, from_unit: str, to_unit: str):
+    """Переводит значение из одной поддерживаемой единицы в другую"""
+    # Приводим единицы к нижнему регистру, чтобы CM и cm воспринимались одинаково
     from_unit = from_unit.lower()
     to_unit = to_unit.lower()
 
@@ -22,6 +26,7 @@ def convert(value: float, from_unit: str, to_unit: str):
         raise ValueError('Неизвестная единица')
 
     if from_unit in temperature_units and to_unit in temperature_units:
+        # Температуру сначала переводим в Цельсии, а затем из Цельсия в нужную единицу
         if from_unit == 'c':
             celsius = value
         elif from_unit == 'f':
@@ -29,7 +34,7 @@ def convert(value: float, from_unit: str, to_unit: str):
         elif from_unit == 'k':
             celsius = value - 273.15
 
-        if celsius < -273.15:
+        if celsius < -273.15: # Проверяем, что температура не ниже абсолютного нуля
             raise ValueError('Температура ниже абсолютного нуля')
 
         if from_unit == to_unit:
@@ -43,6 +48,7 @@ def convert(value: float, from_unit: str, to_unit: str):
         elif to_unit == 'k':
             return float(celsius + 273.15)
     elif from_unit in length_units and to_unit in length_units:
+    # Выбираем группу единиц и не разрешаем перевод между разными группами.
         units = length_units
     elif from_unit in mass_units and to_unit in mass_units:
         units = mass_units

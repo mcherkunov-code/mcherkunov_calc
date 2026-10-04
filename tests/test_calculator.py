@@ -90,6 +90,7 @@ def test_remainder_of_division_by_zero():
 
 
 def test_cli_calculate():
+    # Тесты ниже проверяют запуск программы через CLI, а не отдельные функции.
     result = subprocess.run(
         [
             sys.executable,

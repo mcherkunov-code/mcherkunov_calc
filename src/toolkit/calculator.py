@@ -1,12 +1,16 @@
+"""Логика разбора и вычисления арифметических выражений."""
+
 def tokenize(expression: str):
+    """Разбивает арифметическое выражение на числа и операторы"""
     tokens: list[tuple[str, float | str]] = []
     state = "START"
     current_token = ""
     expect_number = True
 
-    skip_next = False
+    skip_next = False # Флаг нужен, чтобы пропустить второй символ оператора "//"
 
     for i, char in enumerate(expression):
+        # Индекс i нужен для проверки следующего символа при обработке "//".
         if skip_next:
             skip_next = False
             continue
@@ -23,6 +27,7 @@ def tokenize(expression: str):
                     tokens.append(("OPERATOR", char))
                     expect_number = True
             elif char == "/":
+                # Проверяем следующий символ, чтобы отличить "/" от "//"
                 if i + 1 < len(expression) and expression[i + 1] == "/":
                     tokens.append(("OPERATOR", "//"))
                     expect_number = True
@@ -85,7 +90,8 @@ def tokenize(expression: str):
     return tokens
 
 
-def validate(tokens):
+def validate(tokens) -> None:
+    """Проверяет, что последовательность токенов образует корректное выражение"""
     if not tokens:
         raise ValueError("Пустое выражение")
 
@@ -96,6 +102,7 @@ def validate(tokens):
         raise ValueError("Выражение должно заканчиваться числом")
 
     for i in range(len(tokens) - 1):
+        # Проверяем соседние токены, чтобы найти пропущенные и лишние операторы
         current_type = tokens[i][0]
         next_type = tokens[i + 1][0]
 
@@ -107,10 +114,14 @@ def validate(tokens):
 
 
 def calculate(tokens):
+    """Вычисляет результат по предварительно проверенным токенам"""
     acc = tokens[0][1]
     reduced = []
+    # Сохраняем результат сложных операций и оставляем + и - для второго прохода
     i = 1
 
+    # Сначала выполняем операции с более высоким приоритетом:
+    # умножение, деление, целочисленное деление и остаток
     while i < len(tokens):
         operator = tokens[i][1]
         number = tokens[i + 1][1]
@@ -149,6 +160,7 @@ def calculate(tokens):
     reduced.append(acc)
 
     result = reduced[0]
+    # Теперь выполняем оставшиеся операции сложения и вычитания слева направо
     i = 1
 
     while i < len(reduced):
@@ -165,7 +177,8 @@ def calculate(tokens):
     return result
 
 
-def evaluate(expression: str):
+def evaluate(expression: str) -> float:
+    """Проверяет и вычисляет арифметическое выражение"""
     tokens = tokenize(expression)
     validate(tokens)
     return calculate(tokens)
