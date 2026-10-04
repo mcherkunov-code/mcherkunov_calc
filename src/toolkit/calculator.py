@@ -1,8 +1,13 @@
-"""Логика разбора и вычисления арифметических выражений."""
+"""Логика разбора и вычисления арифметических выражений"""
+
+from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal, getcontext
+
+getcontext().prec = 28
+getcontext().rounding = ROUND_HALF_UP
 
 def tokenize(expression: str):
     """Разбивает арифметическое выражение на числа и операторы"""
-    tokens: list[tuple[str, float | str]] = []
+    tokens: list[tuple[str, Decimal | str]] = []
     state = "START"
     current_token = ""
     expect_number = True
@@ -59,7 +64,7 @@ def tokenize(expression: str):
                 current_token += char
                 state = "DOT_AFTER_INT"
             else:
-                tokens.append(("NUMBER", float(current_token)))
+                tokens.append(("NUMBER", Decimal(current_token)))
                 current_token = ""
                 state = "START"
                 expect_number = False
@@ -85,7 +90,7 @@ def tokenize(expression: str):
                 raise ValueError("Некорректное число")
 
     if state == "NUMBER":
-        tokens.append(("NUMBER", float(current_token)))
+        tokens.append(("NUMBER", Decimal(current_token)))
 
     return tokens
 
@@ -129,14 +134,14 @@ def calculate(tokens):
         if operator == "//":
             if number == 0:
                 raise ValueError("Попытка деления на 0")
-            acc //= number
+            acc = (acc / number).to_integral_value(rounding = ROUND_FLOOR)
             i += 2
             continue
 
         if operator == "%":
             if number == 0:
                 raise ValueError("Попытка деления на 0")
-            acc %= number
+            acc = acc - (acc / number).to_integral_value(rounding=ROUND_FLOOR) * number
             i += 2
             continue
 

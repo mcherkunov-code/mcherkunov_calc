@@ -58,7 +58,7 @@ args = parser.parse_args()
 
 try: # Ошибки вычисления и конвертации выводим в stderr и возвращаем код 2
     if args.command == "calc":
-        print(evaluate(args.expression))
+        print(float(evaluate(args.expression)))
 
     elif args.command == "convert":
         print(convert(args.value, args.from_unit, args.to_unit))

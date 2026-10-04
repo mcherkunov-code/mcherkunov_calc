@@ -3,7 +3,8 @@ repos:
     rev: v1.18.1
     hooks:
       - id: mypy
-        args: [--show-error-codes, --pretty]
+        args: [--show-error-codes, --pretty, tests, src/toolkit]
+        pass_filenames: false
         additional_dependencies:
           - types-requests
           - types-PyYAML

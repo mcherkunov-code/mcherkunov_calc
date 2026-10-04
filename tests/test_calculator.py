@@ -1,5 +1,6 @@
 import subprocess
 import sys
+from decimal import Decimal
 
 import pytest
 
@@ -124,3 +125,7 @@ def test_cli_division_by_zero():
 
     assert result.returncode == 2
     assert 'Ошибка' in result.stderr
+
+
+def test_decimal_precision():
+    assert evaluate("0.1 + 0.2") == Decimal("0.3")
