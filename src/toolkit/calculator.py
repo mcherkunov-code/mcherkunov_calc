@@ -5,6 +5,7 @@ from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal, getcontext
 getcontext().prec = 28
 getcontext().rounding = ROUND_HALF_UP
 
+
 def tokenize(expression: str):
     """Разбивает арифметическое выражение на числа и операторы"""
     tokens: list[tuple[str, Decimal | str]] = []
@@ -12,7 +13,7 @@ def tokenize(expression: str):
     current_token = ""
     expect_number = True
 
-    skip_next = False # Флаг нужен, чтобы пропустить второй символ оператора "//"
+    skip_next = False  # Флаг нужен, чтобы пропустить второй символ оператора "//"
 
     for i, char in enumerate(expression):
         # Индекс i нужен для проверки следующего символа при обработке "//".
@@ -71,12 +72,14 @@ def tokenize(expression: str):
 
                 if char in "+-*%":
                     tokens.append(("OPERATOR", char))
+                    expect_number = True
                 elif char == "/":
                     if i + 1 < len(expression) and expression[i + 1] == "/":
                         tokens.append(("OPERATOR", "//"))
                         skip_next = True
                     else:
                         tokens.append(("OPERATOR", "/"))
+                        expect_number = True
                 elif char.isspace():
                     continue
                 else:
@@ -134,7 +137,7 @@ def calculate(tokens):
         if operator == "//":
             if number == 0:
                 raise ValueError("Попытка деления на 0")
-            acc = (acc / number).to_integral_value(rounding = ROUND_FLOOR)
+            acc = (acc / number).to_integral_value(rounding=ROUND_FLOOR)
             i += 2
             continue
 
@@ -184,6 +187,10 @@ def calculate(tokens):
 
 def evaluate(expression: str) -> float:
     """Проверяет и вычисляет арифметическое выражение"""
+    return float(evaluate_decimal(expression))
+
+
+def evaluate_decimal(expression: str) -> Decimal:
     tokens = tokenize(expression)
     validate(tokens)
     return calculate(tokens)

@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from toolkit.calculator import evaluate
+from toolkit.calculator import evaluate, evaluate_decimal
 
 
 def test_addition():
@@ -128,4 +128,4 @@ def test_cli_division_by_zero():
 
 
 def test_decimal_precision():
-    assert evaluate("0.1 + 0.2") == Decimal("0.3")
+    assert evaluate_decimal("0.1 + 0.2") == Decimal("0.3")

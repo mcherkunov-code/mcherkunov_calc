@@ -43,6 +43,11 @@ def test_units_are_case_insensitive():
     assert convert(100, "CM", "M") == 1.0
 
 
+def test_negative_mass():
+    with pytest.raises(ValueError):
+        convert(-12, "kg", "g")
+
+
 def test_unknown_unit():
     with pytest.raises(ValueError, match="Неизвестная единица"):
         convert(10, "cm", "abc")

@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from .calculator import evaluate
+from .calculator import evaluate_decimal
 from .converter import convert
 
 parser = argparse.ArgumentParser(
@@ -56,13 +56,19 @@ convert_parser.add_argument(
 
 args = parser.parse_args()
 
-try: # Ошибки вычисления и конвертации выводим в stderr и возвращаем код 2
+try:  # Ошибки вычисления и конвертации выводим в stderr и возвращаем код 2
     if args.command == "calc":
-        print(float(evaluate(args.expression)))
+        result = evaluate_decimal(args.expression)
+        formatted_result = format(result, "f")
+
+        if result == result.to_integral_value():
+            formatted_result += ".0"
+
+        print(formatted_result)
 
     elif args.command == "convert":
         print(convert(args.value, args.from_unit, args.to_unit))
 
 except (ValueError, ZeroDivisionError) as error:
     print(f"Ошибка: {error}", file=sys.stderr)
-    raise SystemExit(2) # Код 2 используется для ошибок пользовательского ввода
+    raise SystemExit(2)  # Код 2 используется для ошибок пользовательского ввода
